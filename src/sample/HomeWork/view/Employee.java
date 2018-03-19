@@ -1,9 +1,6 @@
 package sample.HomeWork.view;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 import java.util.Date;
 
@@ -17,6 +14,9 @@ public class Employee {
         this.nome = new SimpleStringProperty();
         this.sexe = new SimpleStringProperty();
         this.prenom = new SimpleStringProperty();
+        this.adr = new SimpleStringProperty();
+        this.tel = new SimpleIntegerProperty();
+        this.birth = new SimpleObjectProperty<>();
     }
 
     public StringProperty getNomeProperty(){
@@ -63,5 +63,13 @@ public class Employee {
     }
     public Date getdate(){
         return birth.get();
+    }
+
+    public void setTel(Integer tel){
+        this.tel.set(tel);
+    }
+
+    public Integer geTel(){
+        return tel.get();
     }
 }

@@ -5,21 +5,24 @@ import com.jfoenix.controls.JFXTextField;
 import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 import sample.HomeWork.view.Employee;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.sql.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -35,9 +38,14 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<Employee, String> c1;
     @FXML
+    private ImageView img1,img2,img3,img4,img5;
+    @FXML
     private TableColumn<Employee, String> c2;
     private ObservableList<Employee> emplList = FXCollections.observableArrayList();
     private ToggleGroup tg = new ToggleGroup();
+    private Boolean nomeBool=false, ddnBool=false, adrBool=false, telBool=false, genderBool=false;
+    private Date s4;
+    private String s1=" ",s2=" ", s3=" ";
 
 
     @Override
@@ -64,60 +72,149 @@ public class Controller implements Initializable {
 
     @FXML
     public void addHandle(ActionEvent event){
-        String s = np.getText();
-        String s1 = " ", s2 = " ";
+        s1 = np.getText();
+        s2 = adr.getText();
+        s3 = tel.getText();
+        if(birth.getValue()!=null)
+            s4 = Date.valueOf(birth.getValue());
+        String nome = "", prenom = "";
         Employee emp = new Employee();
-        for (int i = 0; i<s.length();i++){
-            if(s.charAt(i)== ' ') {
-                s1 = s.substring(0, i);
-                s2 = s.substring(i + 1, s.length());
-
-            }
+//want to bring the nullpointer exception out of these for catching and using it
+        if(s1.trim().equals("")||s1.equals(null)){
+            img1.setVisible(true);
+            Timeline t = new Timeline(new KeyFrame(Duration.millis(1500), ae -> img1.setVisible(false)));
+            t.play();
         }
-        emp.setNome(s1);
-        emp.setPrenom(s2);
-
-        if (mRb.isSelected())
+        else {
+            for (int i = 0; i < s1.length(); i++) {
+                if (s1.charAt(i) == ' ') {
+                    nome = s1.substring(0, i);
+                    prenom = s1.substring(i + 1, s1.length());
+                    nomeBool = true;
+                }if(i==s1.length()-1&&nomeBool==false){
+                    nome = s1;
+                    nomeBool = true;
+                }
+            }
+            emp.setNome(nome.trim());
+            emp.setPrenom(prenom.trim());
+//            System.out.println(nome);
+//            System.out.println(prenom);
+        }
+//*****************************************************************
+        if(s4==null) {
+            img2.setVisible(true);
+            Timeline t = new Timeline(new KeyFrame(Duration.millis(1500), ae -> img2.setVisible(false)));
+            t.play();
+        }
+        else{
+            emp.setDate(s4);
+            ddnBool=true;
+        }
+//**************************Adress**************************************
+        if(s2.trim().equals("")||s2.equals(null)) {
+            img3.setVisible(true);
+            Timeline t = new Timeline(new KeyFrame(Duration.millis(1500), ae -> img3.setVisible(false)));
+            t.play();
+        }
+        else{
+            emp.setAdr(s2.trim());
+            adrBool=true;
+        }
+//**********************Tel****************************************
+        try {
+            if (s3.trim().equals("") || s3.equals(null)) {
+                img4.setVisible(true);
+                Timeline t = new Timeline(new KeyFrame(Duration.millis(1500), ae -> img4.setVisible(false)));
+                t.play();
+            } else {
+                Integer n = Integer.parseInt(s3);
+                emp.setTel(n);
+                adrBool = true;
+            }
+        }catch(NumberFormatException e){
+            img4.setVisible(true);
+            Timeline t = new Timeline(new KeyFrame(Duration.millis(1500), ae -> img4.setVisible(false)));
+            t.play();
+        }
+//***********************Gender****************************************
+        if (mRb.isSelected()){
             emp.setSexe("Masculin");
-        if (fRb.isSelected())
+            genderBool=true;
+        }
+        else
+            if (fRb.isSelected()){
             emp.setSexe("Feminin");
+            genderBool = true;
+        }
+        else{
+                img5.setVisible(true);
+                Timeline t = new Timeline(new KeyFrame(Duration.millis(1500), ae -> img5.setVisible(false)));
+                t.play();
+            }
+//*******************************************************************
+        if(nomeBool==true&&genderBool==true)
         emplList.add(emp);
 
 
-        System.out.println(s1+"+"+s2);
     }
     @FXML
     public void removeHandle(ActionEvent event) {
-        Employee obj = tabEmp.getSelectionModel().getSelectedItem();
-        emplList.remove(obj);
+        try {
+            Employee obj = tabEmp.getSelectionModel().getSelectedItem();
+            emplList.remove(obj);
+            String s = obj.getNome();//this just to cause N.P.E
+        }catch(NullPointerException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Select item to delete");
+            Optional<ButtonType> result = alert.showAndWait();
+        }
     }
     @FXML
     public void displayHandle(ActionEvent event){
-        Employee obj = tabEmp.getSelectionModel().getSelectedItem();
-        np.setText(obj.getNome()+" "+obj.getPrenom());
-        if(obj.getSexe().equals("Feminin"))
-            fRb.setSelected(true);
-        if(obj.getSexe().equals("Masculin"))
-            mRb.setSelected(true);
+        try {
+            Employee obj = tabEmp.getSelectionModel().getSelectedItem();
+            if(obj.getPrenom()!=null)
+                np.setText(obj.getNome() + " " + obj.getPrenom());
+            else
+                np.setText(obj.getNome());
+
+            if (obj.getSexe().equals("Feminin"))
+                fRb.setSelected(true);
+            if (obj.getSexe().equals("Masculin"))
+                mRb.setSelected(true);
+        }catch(NullPointerException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Select item to modify");
+            Optional<ButtonType> result = alert.showAndWait();
+        }
     }
 
     @FXML
     public void printHandle(ActionEvent event)throws Exception{
-        Employee obj = tabEmp.getSelectionModel().getSelectedItem();
-        Document doc = new Document();
-        FileOutputStream fos = new FileOutputStream("x:/test.pdf");
-        PdfWriter.getInstance(doc, fos);
+        try {
+            Employee obj = tabEmp.getSelectionModel().getSelectedItem();
+            Document doc = new Document();
+            FileOutputStream fos = new FileOutputStream("x:/test.pdf");
+            PdfWriter.getInstance(doc, fos);
 
-        doc.open();
+            doc.open();
 
-        Paragraph p = new Paragraph("Nome "+obj.getNome());
-        Paragraph p2 = new Paragraph("Sexe "+obj.getSexe());
+            Paragraph p = new Paragraph("Nome " + obj.getNome());
+            Paragraph p2 = new Paragraph("Sexe " + obj.getSexe());
 
-        doc.add(p);
-        doc.add(p2);
+            doc.add(p);
+            doc.add(p2);
 
-        doc.close();
-        Desktop.getDesktop().open(new File("x:/test.pdf"));
+            doc.close();
+            Desktop.getDesktop().open(new File("x:/test.pdf"));
+            String s = obj.getNome();//this just to cause N.P.E
+
+    }catch(NullPointerException e){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText("Select item to print");
+        Optional<ButtonType> result = alert.showAndWait();
+    }
     }
 
 }

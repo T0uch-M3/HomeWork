@@ -1,7 +1,9 @@
 package sample.HomeWork.controller;
 
+import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
@@ -14,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import sample.HomeWork.view.Employee;
 
@@ -29,6 +32,8 @@ public class Controller implements Initializable {
 
     @FXML
     private JFXTextField np, tel, adr;
+    @FXML
+    private JFXHamburger ham;
     @FXML
     private DatePicker birth;
     @FXML
@@ -46,8 +51,10 @@ public class Controller implements Initializable {
     private Boolean nomeBool=false, ddnBool=false, adrBool=false, telBool=false, genderBool=false;
     private Date s4;
     private String s1=" ",s2=" ", s3=" ";
-
-
+    int state = 0;
+    private HamburgerBackArrowBasicTransition backHam;
+//    private HamburgerBasicCloseTransition closeHam = new HamburgerBasicCloseTransition(ham);
+//    private HamburgerNextArrowBasicTransition nextHam = new HamburgerNextArrowBasicTransition(ham);
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         mRb.setToggleGroup(tg);
@@ -68,8 +75,23 @@ public class Controller implements Initializable {
         c1.setCellValueFactory(cellData -> cellData.getValue().getNomeProperty());
         c2.setCellValueFactory(cellData -> cellData.getValue().getSexeProperty());
         tabEmp.setItems(emplList);
+        backHam = new HamburgerBackArrowBasicTransition(ham);
+        backHam.setRate(-1);
+//        closeHam.setRate(-1);
+//        nextHam.setRate(-1);
+//        ham.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+//            backHam.setRate(backHam.getRate() * -1);
+//            backHam.play();
+//        });
+
+
     }
 
+    @FXML
+    private void hamReaction(MouseEvent event){
+        backHam.setRate(backHam.getRate()*-1);
+        backHam.play();
+    }
     @FXML
     public void addHandle(ActionEvent event){
         s1 = np.getText();

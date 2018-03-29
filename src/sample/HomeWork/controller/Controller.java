@@ -1,9 +1,12 @@
 package sample.HomeWork.controller;
 
+import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
+import com.jfoenix.transitions.hamburger.HamburgerBasicCloseTransition;
+import com.jfoenix.transitions.hamburger.HamburgerNextArrowBasicTransition;
 import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
@@ -13,16 +16,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import sample.HomeWork.view.Employee;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.util.Optional;
@@ -45,6 +51,8 @@ public class Controller implements Initializable {
     @FXML
     private ImageView img1,img2,img3,img4,img5;
     @FXML
+    JFXDrawer drawer;
+    @FXML
     private TableColumn<Employee, String> c2;
     private ObservableList<Employee> emplList = FXCollections.observableArrayList();
     private ToggleGroup tg = new ToggleGroup();
@@ -53,10 +61,21 @@ public class Controller implements Initializable {
     private String s1=" ",s2=" ", s3=" ";
     int state = 0;
     private HamburgerBackArrowBasicTransition backHam;
-//    private HamburgerBasicCloseTransition closeHam = new HamburgerBasicCloseTransition(ham);
-//    private HamburgerNextArrowBasicTransition nextHam = new HamburgerNextArrowBasicTransition(ham);
+    private HamburgerBasicCloseTransition closeHam;
+    private HamburgerNextArrowBasicTransition nextHam;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        try {
+            VBox box = FXMLLoader.load(getClass().getResource("/sample/HomeWork/view/drawerPane.fxml"));
+            drawer.setSidePane(box);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        state = 0;//initialize the ham state to default
         mRb.setToggleGroup(tg);
         fRb.setToggleGroup(tg);
         Employee emp = new Employee();
@@ -70,27 +89,47 @@ public class Controller implements Initializable {
         System.out.println(emp2.getNome()+" "+emp2.getSexe());
         emplList.addAll(emp, emp2);
 
-//        c1.setCellValueFactory(new PropertyValueFactory<>("nome"));
-//        c2.setCellValueFactory((new PropertyValueFactory<>("sexe")));
         c1.setCellValueFactory(cellData -> cellData.getValue().getNomeProperty());
         c2.setCellValueFactory(cellData -> cellData.getValue().getSexeProperty());
         tabEmp.setItems(emplList);
+
         backHam = new HamburgerBackArrowBasicTransition(ham);
         backHam.setRate(-1);
-//        closeHam.setRate(-1);
-//        nextHam.setRate(-1);
-//        ham.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-//            backHam.setRate(backHam.getRate() * -1);
-//            backHam.play();
-//        });
+        nextHam = new HamburgerNextArrowBasicTransition(ham);
+        nextHam.setRate(-1);
+        closeHam = new HamburgerBasicCloseTransition(ham);
+        closeHam.setRate(-1);
 
 
     }
 
     @FXML
     private void hamReaction(MouseEvent event){
-        backHam.setRate(backHam.getRate()*-1);
-        backHam.play();
+        switch (state){
+            case 0 :{
+                if (drawer.isHidden()){
+                    drawer.open();
+                    drawer.toFront();
+                }
+
+                else {
+                    drawer.close();
+                    drawer.toBack();
+                }
+
+                nextHam.setRate(nextHam.getRate()*-1);
+                nextHam.play();
+                System.out.println("next");
+                break;
+            }
+            case 1 :{
+                backHam.setRate(backHam.getRate()*-1);
+                backHam.play();
+                System.out.println("back");
+                break;
+            }
+        }
+
     }
     @FXML
     public void addHandle(ActionEvent event){

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="581.0" prefWidth="300.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.HomeWork.controller.Controller2">
+   <children>
+      <ImageView fitHeight="157.0" fitWidth="300.0">
+         <image>
+            <Image url="@image/bitmap.png" />
+         </image>
+      </ImageView>
+      <JFXButton layoutX="10.0" layoutY="167.0" prefHeight="49.0" prefWidth="300.0" style="-fx-background-color: #1887F2;" text="Home" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font size="15.0" />
+         </font>
+         <graphic>
+            <ImageView>
+               <image>
+                  <Image url="@image/id-card.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+      <JFXButton layoutX="10.0" layoutY="172.0" onAction="#gotoManage" prefHeight="49.0" prefWidth="300.0" style="-fx-background-color: #1887F2;" text="Managing Employee" textFill="WHITE">
+         <font>
+            <Font size="15.0" />
+         </font>
+         <graphic>
+            <ImageView>
+               <image>
+                  <Image url="@image/diamond.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+      <JFXButton layoutX="10.0" layoutY="226.0" onAction="#gotoOther" prefHeight="49.0" prefWidth="300.0" style="-fx-background-color: #1887F2;" text="Other Tab" textFill="WHITE">
+         <font>
+            <Font size="15.0" />
+         </font>
+         <graphic>
+            <ImageView>
+               <image>
+                  <Image url="@image/paper-plane.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+   </children>
+</VBox>

@@ -7,11 +7,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import sample.HomeWork.controller.Controller;
 
+import java.io.IOException;
 
-public class main extends Application{
 
+public class Main extends Application{
+
+    public static Stage stage;
     @Override
     public void start(Stage primaryStage) throws Exception {
+        stage = primaryStage;
         FXMLLoader loader=new FXMLLoader(getClass().getResource("portailLoginscreen.fxml")) ;
         loader.setController(new Controller());
         Parent root=loader.load();
@@ -24,6 +28,10 @@ public class main extends Application{
     }
     public static void main(String[] args) {
         launch();
+    }
+    public void goto2() throws IOException {
+        Parent pane = FXMLLoader.load(getClass().getResource("/sample/HomeWork/view/otherTab.fxml"));
+        stage.setScene(new Scene(pane));
     }
 
     
